@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 520px; margin: 40px auto; font-family: -apple-system, sans-serif;">
+    <!-- Header Card -->
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); padding: 30px; border-radius: 20px 20px 0 0; text-align: center;">
+        <div style="font-size: 48px; margin-bottom: 10px;">👤</div>
+        <h1 style="color: white; margin: 0 0 8px 0; font-size: 1.8em; font-weight: 700;">Edit Profile</h1>
+        <p style="color: rgba(255,255,255,0.9); margin: 0; font-size: 1em;">Customize your Arecko profile</p>
+    </div>
+
+    <!-- Form Card -->
+    <div style="background: white; padding: 35px; border-radius: 0 0 20px 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Profile Picture -->
+            <div style="margin-bottom: 24px; text-align: center;">
+                <label style="display: block; font-weight: 600; margin-bottom: 15px; color: #1a1a2e; font-size: 0.95em;">
+                    Profile Picture
+                </label>
+                <div style="position: relative; display: inline-block;">
+                    {% if profile.profile_picture %}
+                        <img src="{{ profile.profile_picture.url }}" id="preview-image"
+                             style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid #667eea;">
+                    {% else %}
+                        <div id="preview-placeholder" style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px; font-weight: 600; border: 4px solid #667eea;">
+                            {{ request.user.first_name.0|default:request.user.username.0|upper }}
+                        </div>
+                        <img src="" id="preview-image" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid #667eea; display: none;">
+                    {% endif %}
+                    <label for="profile-pic-upload" style="position: absolute; bottom: 0; right: 0; width: 36px; height: 36px; background: #667eea; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; font-size: 18px; border: 3px solid white;">
+                        📷
+                    </label>
+                    <input type="file" id="profile-pic-upload" name="profile_picture" accept="image/*" style="display: none;">
+                </div>
+                <p style="margin: 10px 0 0 0; color: #888; font-size: 0.8em;">Click the camera to upload a photo</p>
+            </div>
+
+            <!-- Display Name -->
+            <div style="margin-bottom: 24px;">
+                <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 10px; color: #1a1a2e; font-size: 0.95em;">
+                    <span style="width: 24px; height: 24px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;">✨</span>
+                    Display Name
+                </label>
+                <input type="text" name="display_name" value="{{ request.user.first_name }}" placeholder="Your display name"
+                       style="width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 12px; font-size: 1em; box-sizing: border-box; transition: border-color 0.2s, box-shadow 0.2s; outline: none;"
+                       onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 4px rgba(102,126,234,0.1)';"
+                       onblur="this.style.borderColor='#e8e8e8'; this.style.boxShadow='none';">
+            </div>
+
+            <!-- Email -->
+            <div style="margin-bottom: 24px;">
+                <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 10px; color: #1a1a2e; font-size: 0.95em;">
+                    <span style="width: 24px; height: 24px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;">📧</span>
+                    Email
+                </label>
+                <input type="email" name="email" value="{{ request.user.email }}" placeholder="your@email.com"
+                       style="width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 12px; font-size: 1em; box-sizing: border-box; transition: border-color 0.2s, box-shadow 0.2s; outline: none;"
+                       onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 4px rgba(102,126,234,0.1)';"
+                       onblur="this.style.borderColor='#e8e8e8'; this.style.boxShadow='none';">
+            </div>
+
+            <!-- Bio -->
+            <div style="margin-bottom: 24px;">
+                <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 10px; color: #1a1a2e; font-size: 0.95em;">
+                    <span style="width: 24px; height: 24px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;">📝</span>
+                    Bio
+                </label>
+                <textarea name="bio" placeholder="Tell others about yourself..."
+                          style="width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 12px; height: 100px; font-size: 1em; font-family: inherit; box-sizing: border-box; resize: vertical; transition: border-color 0.2s, box-shadow 0.2s; outline: none;"
+                          onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 4px rgba(102,126,234,0.1)';"
+                          onblur="this.style.borderColor='#e8e8e8'; this.style.boxShadow='none';">{{ profile.bio }}</textarea>
+            </div>
+
+            <!-- Location -->
+            <div style="margin-bottom: 24px;">
+                <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 10px; color: #1a1a2e; font-size: 0.95em;">
+                    <span style="width: 24px; height: 24px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;">📍</span>
+                    Location
+                </label>
+                <input type="text" name="location" value="{{ profile.location }}" placeholder="City, State"
+                       style="width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 12px; font-size: 1em; box-sizing: border-box; transition: border-color 0.2s, box-shadow 0.2s; outline: none;"
+                       onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 4px rgba(102,126,234,0.1)';"
+                       onblur="this.style.borderColor='#e8e8e8'; this.style.boxShadow='none';">
+            </div>
+
+            <!-- Website -->
+            <div style="margin-bottom: 28px;">
+                <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 10px; color: #1a1a2e; font-size: 0.95em;">
+                    <span style="width: 24px; height: 24px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;">🔗</span>
+                    Website
+                </label>
+                <input type="url" name="website" value="{{ profile.website }}" placeholder="https://yourwebsite.com"
+                       style="width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 12px; font-size: 1em; box-sizing: border-box; transition: border-color 0.2s, box-shadow 0.2s; outline: none;"
+                       onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 4px rgba(102,126,234,0.1)';"
+                       onblur="this.style.borderColor='#e8e8e8'; this.style.boxShadow='none';">
+            </div>
+
+            <!-- Buttons -->
+            <div style="display: flex; gap: 12px;">
+                <a href="{% url 'user_profile' request.user.username %}"
+                   style="flex: 1; text-align: center; padding: 16px; border: 2px solid #e8e8e8; border-radius: 12px; color: #666; text-decoration: none; font-weight: 600; transition: all 0.2s;"
+                   onmouseover="this.style.borderColor='#667eea'; this.style.color='#667eea';"
+                   onmouseout="this.style.borderColor='#e8e8e8'; this.style.color='#666';">
+                    Cancel
+                </a>
+                <button type="submit" style="flex: 2; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 1em; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 15px rgba(102,126,234,0.4);"
+                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(102,126,234,0.5)';"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(102,126,234,0.4)';">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+
+        <!-- Account Settings Link -->
+        <div style="text-align: center; margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee;">
+            <a href="{% url 'account_settings' %}" style="color: #888; text-decoration: none; font-size: 0.9em;">
+                Account Settings (Password, Delete Account)
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+// Preview profile picture before upload
+document.getElementById('profile-pic-upload').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('preview-image');
+            const placeholder = document.getElementById('preview-placeholder');
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+            if (placeholder) {
+                placeholder.style.display = 'none';
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+{% endblock %}

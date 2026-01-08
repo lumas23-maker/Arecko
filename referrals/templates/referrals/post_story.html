@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 520px; margin: 40px auto; font-family: -apple-system, sans-serif;">
+    <!-- Header Card -->
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); padding: 30px; border-radius: 20px 20px 0 0; text-align: center;">
+        <div style="font-size: 48px; margin-bottom: 10px;">✨</div>
+        <h1 style="color: white; margin: 0 0 8px 0; font-size: 1.8em; font-weight: 700;">Share Your Experience</h1>
+        <p style="color: rgba(255,255,255,0.9); margin: 0; font-size: 1em;">Help others discover amazing local businesses</p>
+    </div>
+
+    <!-- Form Card -->
+    <div style="background: white; padding: 35px; border-radius: 0 0 20px 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Business Name -->
+            <div style="margin-bottom: 24px;">
+                <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 10px; color: #1a1a2e; font-size: 0.95em;">
+                    <span style="width: 24px; height: 24px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;">🏢</span>
+                    Business Name
+                </label>
+                <input type="text" name="business_name" required placeholder="e.g., Toyota of Joe"
+                       style="width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 12px; font-size: 1em; box-sizing: border-box; transition: border-color 0.2s, box-shadow 0.2s; outline: none;"
+                       onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 4px rgba(102,126,234,0.1)';"
+                       onblur="this.style.borderColor='#e8e8e8'; this.style.boxShadow='none';">
+            </div>
+
+            <!-- Industry -->
+            <div style="margin-bottom: 24px;">
+                <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 10px; color: #1a1a2e; font-size: 0.95em;">
+                    <span style="width: 24px; height: 24px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;">📂</span>
+                    Industry
+                </label>
+                <select name="industry" required
+                        style="width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 12px; font-size: 1em; box-sizing: border-box; transition: border-color 0.2s, box-shadow 0.2s; outline: none; background: white; cursor: pointer;"
+                        onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 4px rgba(102,126,234,0.1)';"
+                        onblur="this.style.borderColor='#e8e8e8'; this.style.boxShadow='none';">
+                    <option value="">Select an industry...</option>
+                    <option value="automotive">🚗 Automotive</option>
+                    <option value="restaurant">🍽️ Restaurant & Food</option>
+                    <option value="retail">🛍️ Retail & Shopping</option>
+                    <option value="health">🏥 Health & Wellness</option>
+                    <option value="beauty">💅 Beauty & Spa</option>
+                    <option value="home">🏠 Home Services</option>
+                    <option value="professional">💼 Professional Services</option>
+                    <option value="fitness">🏋️ Fitness & Sports</option>
+                    <option value="entertainment">🎬 Entertainment</option>
+                    <option value="travel">✈️ Travel & Hospitality</option>
+                    <option value="technology">💻 Technology</option>
+                    <option value="education">📚 Education</option>
+                    <option value="other">📦 Other</option>
+                </select>
+            </div>
+
+            <!-- Contact Info (Optional) -->
+            <div style="margin-bottom: 24px;">
+                <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 10px; color: #1a1a2e; font-size: 0.95em;">
+                    <span style="width: 24px; height: 24px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;">📞</span>
+                    Contact Info <span style="font-weight: 400; color: #888; font-size: 0.85em;">(Optional)</span>
+                </label>
+                <input type="text" name="contact_info" placeholder="Your phone or email for the business to verify"
+                       style="width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 12px; font-size: 1em; box-sizing: border-box; transition: border-color 0.2s, box-shadow 0.2s; outline: none;"
+                       onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 4px rgba(102,126,234,0.1)';"
+                       onblur="this.style.borderColor='#e8e8e8'; this.style.boxShadow='none';">
+                <p style="margin: 8px 0 0 0; color: #888; font-size: 0.8em;">Helps the business verify your referral for status rewards 🏆</p>
+            </div>
+
+            <!-- Recommendation Text -->
+            <div style="margin-bottom: 24px;">
+                <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 10px; color: #1a1a2e; font-size: 0.95em;">
+                    <span style="width: 24px; height: 24px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;">💬</span>
+                    Your Recommendation
+                </label>
+                <textarea name="story" required placeholder="What made your experience great? Share the details..."
+                          style="width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 12px; height: 120px; font-size: 1em; font-family: inherit; box-sizing: border-box; resize: vertical; transition: border-color 0.2s, box-shadow 0.2s; outline: none;"
+                          onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 4px rgba(102,126,234,0.1)';"
+                          onblur="this.style.borderColor='#e8e8e8'; this.style.boxShadow='none';"></textarea>
+            </div>
+
+            <!-- Media Upload -->
+            <div style="margin-bottom: 28px;">
+                <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 10px; color: #1a1a2e; font-size: 0.95em;">
+                    <span style="width: 24px; height: 24px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;">📸</span>
+                    Add Photo or Video
+                </label>
+                <label for="media-upload" style="display: block; border: 2px dashed #d0d0d0; padding: 30px 20px; border-radius: 12px; text-align: center; background: linear-gradient(180deg, #fafafa 0%, #f5f5f5 100%); cursor: pointer; transition: all 0.2s;"
+                       onmouseover="this.style.borderColor='#667eea'; this.style.background='linear-gradient(180deg, #f0f0ff 0%, #e8e8f5 100%)';"
+                       onmouseout="this.style.borderColor='#d0d0d0'; this.style.background='linear-gradient(180deg, #fafafa 0%, #f5f5f5 100%)';">
+                    <div style="font-size: 36px; margin-bottom: 10px;">📁</div>
+                    <p style="margin: 0 0 5px 0; color: #1a1a2e; font-weight: 500;">Click to upload</p>
+                    <p style="margin: 0; color: #888; font-size: 0.85em;">Supports images and videos</p>
+                    <input type="file" id="media-upload" name="media" accept="video/*,image/*" required style="display: none;">
+                </label>
+                <p id="file-name" style="margin-top: 10px; color: #667eea; font-size: 0.9em; text-align: center;"></p>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" style="width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 1.1em; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 15px rgba(102,126,234,0.4);"
+                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(102,126,234,0.5)';"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(102,126,234,0.4)';">
+                Share Your Arecko-mendation 🚀
+            </button>
+        </form>
+
+        <!-- Footer Note -->
+        <p style="text-align: center; margin-top: 20px; color: #888; font-size: 0.85em;">
+            Your recommendation helps others make better decisions ❤️
+        </p>
+    </div>
+</div>
+
+<script>
+document.getElementById('media-upload').addEventListener('change', function(e) {
+    const fileName = e.target.files[0] ? e.target.files[0].name : '';
+    document.getElementById('file-name').textContent = fileName ? '✓ ' + fileName : '';
+});
+</script>
+{% endblock %}

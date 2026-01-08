@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 40px auto; font-family: -apple-system, sans-serif;">
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); padding: 30px; border-radius: 20px 20px 0 0; text-align: center;">
+        <div style="font-size: 48px; margin-bottom: 10px;">📧</div>
+        <h1 style="color: white; margin: 0 0 8px 0; font-size: 1.8em; font-weight: 700;">Ask for Arecko-mendations</h1>
+        <p style="color: rgba(255,255,255,0.9); margin: 0; font-size: 1em;">Request referrals from your customers</p>
+    </div>
+
+    <!-- Form Card -->
+    <div style="background: white; padding: 35px; border-radius: 0 0 20px 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+
+        <!-- Tab Navigation -->
+        <div style="display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 2px solid #eee; padding-bottom: 15px;">
+            <button onclick="showTab('single')" id="tab-single" class="tab-btn" style="flex: 1; padding: 12px; border: none; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                Single Email
+            </button>
+            <button onclick="showTab('bulk')" id="tab-bulk" class="tab-btn" style="flex: 1; padding: 12px; border: 2px solid #e8e8e8; background: white; color: #666; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                Bulk Upload
+            </button>
+            <button onclick="showTab('api')" id="tab-api" class="tab-btn" style="flex: 1; padding: 12px; border: 2px solid #e8e8e8; background: white; color: #666; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                CRM / API
+            </button>
+        </div>
+
+        <!-- Single Email Tab -->
+        <div id="panel-single" class="tab-panel">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="mode" value="single">
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 10px; color: #1a1a2e;">
+                        <span style="width: 24px; height: 24px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;">📧</span>
+                        Customer Email
+                    </label>
+                    <input type="email" name="customer_email" required placeholder="customer@example.com"
+                           style="width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 12px; font-size: 1em; box-sizing: border-box;">
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 10px; color: #1a1a2e;">
+                        <span style="width: 24px; height: 24px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;">💬</span>
+                        Personal Message <span style="font-weight: 400; color: #888; font-size: 0.85em;">(Optional)</span>
+                    </label>
+                    <textarea name="personal_message" placeholder="Add a personal touch... e.g., 'Thanks for your purchase today!'"
+                              style="width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 12px; height: 80px; font-size: 1em; font-family: inherit; box-sizing: border-box; resize: vertical;"></textarea>
+                </div>
+
+                <button type="submit" style="width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 1em;">
+                    Send Request
+                </button>
+            </form>
+        </div>
+
+        <!-- Bulk Upload Tab -->
+        <div id="panel-bulk" class="tab-panel" style="display: none;">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="mode" value="bulk">
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 10px; color: #1a1a2e;">
+                        <span style="width: 24px; height: 24px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;">📋</span>
+                        Paste Emails
+                    </label>
+                    <textarea name="bulk_emails" placeholder="Paste emails here, one per line or comma-separated:&#10;&#10;john@example.com&#10;jane@example.com&#10;customer@business.com"
+                              style="width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 12px; height: 150px; font-size: 0.95em; font-family: monospace; box-sizing: border-box; resize: vertical;"></textarea>
+                    <p style="margin: 8px 0 0 0; color: #888; font-size: 0.8em;">Separate emails with commas, spaces, or new lines</p>
+                </div>
+
+                <div style="margin-bottom: 20px; text-align: center; color: #888;">— or —</div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 10px; color: #1a1a2e;">
+                        <span style="width: 24px; height: 24px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;">📁</span>
+                        Upload CSV File
+                    </label>
+                    <label for="csv-upload" style="display: block; border: 2px dashed #d0d0d0; padding: 25px; border-radius: 12px; text-align: center; background: #f9f9f9; cursor: pointer;">
+                        <div style="font-size: 32px; margin-bottom: 8px;">📄</div>
+                        <p style="margin: 0; color: #333; font-weight: 500;">Click to upload CSV</p>
+                        <p style="margin: 5px 0 0 0; color: #888; font-size: 0.8em;">Must have 'email' column</p>
+                        <input type="file" id="csv-upload" name="csv_file" accept=".csv" style="display: none;">
+                    </label>
+                    <p id="csv-file-name" style="margin-top: 10px; color: #667eea; font-size: 0.9em; text-align: center;"></p>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 10px; color: #1a1a2e;">
+                        <span style="width: 24px; height: 24px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;">💬</span>
+                        Message for All <span style="font-weight: 400; color: #888; font-size: 0.85em;">(Optional)</span>
+                    </label>
+                    <textarea name="bulk_message" placeholder="This message will be sent to all recipients..."
+                              style="width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 12px; height: 80px; font-size: 1em; font-family: inherit; box-sizing: border-box; resize: vertical;"></textarea>
+                </div>
+
+                <button type="submit" style="width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 1em;">
+                    Send Bulk Requests
+                </button>
+            </form>
+        </div>
+
+        <!-- API/CRM Tab -->
+        <div id="panel-api" class="tab-panel" style="display: none;">
+            <div style="background: #f8f9fa; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                <h3 style="margin: 0 0 15px 0; color: #1a1a2e;">API Endpoint</h3>
+                <p style="margin: 0 0 10px 0; color: #666; font-size: 0.9em;">Use this endpoint to integrate with your CRM or send automated requests:</p>
+                <code style="display: block; background: #1a1a2e; color: #38ef7d; padding: 15px; border-radius: 8px; font-size: 0.85em; overflow-x: auto;">
+                    POST {{ request.scheme }}://{{ request.get_host }}/api/referral-request/
+                </code>
+            </div>
+
+            <div style="background: #f8f9fa; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                <h3 style="margin: 0 0 15px 0; color: #1a1a2e;">Your API Key</h3>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="api-key" value="{{ api_key|default:'Generate an API key' }}" readonly
+                           style="flex: 1; padding: 12px; border: 2px solid #e8e8e8; border-radius: 8px; font-family: monospace; font-size: 0.9em;">
+                    <button onclick="copyApiKey()" style="padding: 12px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">Copy</button>
+                </div>
+                <form method="POST" style="margin-top: 10px;">
+                    {% csrf_token %}
+                    <input type="hidden" name="mode" value="generate_api_key">
+                    <button type="submit" style="padding: 10px 20px; background: white; color: #667eea; border: 2px solid #667eea; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                        Generate New API Key
+                    </button>
+                </form>
+            </div>
+
+            <div style="background: #f8f9fa; border-radius: 12px; padding: 20px;">
+                <h3 style="margin: 0 0 15px 0; color: #1a1a2e;">Request Format</h3>
+                <pre style="background: #1a1a2e; color: #f8f8f2; padding: 15px; border-radius: 8px; font-size: 0.8em; overflow-x: auto; margin: 0;">
+{
+  "api_key": "your-api-key",
+  "emails": [
+    "customer1@example.com",
+    "customer2@example.com"
+  ],
+  "message": "Optional personal message"
+}</pre>
+                <h4 style="margin: 20px 0 10px 0; color: #1a1a2e;">Example with cURL:</h4>
+                <pre style="background: #1a1a2e; color: #f8f8f2; padding: 15px; border-radius: 8px; font-size: 0.75em; overflow-x: auto; margin: 0;">curl -X POST {{ request.scheme }}://{{ request.get_host }}/api/referral-request/ \
+  -H "Content-Type: application/json" \
+  -d '{"api_key":"YOUR_KEY","emails":["test@example.com"]}'</pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Requests -->
+    <div style="background: white; padding: 25px; border-radius: 20px; margin-top: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+        <h3 style="margin: 0 0 20px 0; color: #1a1a2e; display: flex; align-items: center; gap: 10px;">
+            <span style="width: 28px; height: 28px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px;">📬</span>
+            Recent Requests
+            <span style="background: #e8e8e8; padding: 4px 10px; border-radius: 15px; font-size: 0.7em; color: #666;">{{ referral_requests.count }}</span>
+        </h3>
+
+        {% for req in referral_requests|slice:":20" %}
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <strong style="color: #333;">{{ req.customer_email }}</strong>
+                <p style="margin: 5px 0 0 0; color: #888; font-size: 0.85em;">{{ req.created_at|date:"M d, Y - g:i A" }}</p>
+            </div>
+            <span style="background: #d4edda; color: #155724; padding: 4px 12px; border-radius: 15px; font-size: 0.75em;">Sent</span>
+        </div>
+        {% empty %}
+        <p style="text-align: center; color: #888; padding: 20px;">No requests sent yet.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+function showTab(tab) {
+    // Hide all panels
+    document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
+    // Reset all buttons
+    document.querySelectorAll('.tab-btn').forEach(b => {
+        b.style.background = 'white';
+        b.style.color = '#666';
+        b.style.border = '2px solid #e8e8e8';
+    });
+    // Show selected panel
+    document.getElementById('panel-' + tab).style.display = 'block';
+    // Style selected button
+    const btn = document.getElementById('tab-' + tab);
+    btn.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+    btn.style.color = 'white';
+    btn.style.border = 'none';
+}
+
+document.getElementById('csv-upload').addEventListener('change', function(e) {
+    const fileName = e.target.files[0] ? e.target.files[0].name : '';
+    document.getElementById('csv-file-name').textContent = fileName ? '✓ ' + fileName : '';
+});
+
+function copyApiKey() {
+    const input = document.getElementById('api-key');
+    input.select();
+    document.execCommand('copy');
+    alert('API key copied!');
+}
+</script>
+{% endblock %}

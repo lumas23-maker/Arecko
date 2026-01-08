@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 440px; margin: 40px auto; font-family: -apple-system, sans-serif;">
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 20px 20px 0 0; text-align: center;">
+        <div style="font-size: 48px; margin-bottom: 10px;">🏢</div>
+        <div style="display: inline-block; background: rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 20px; margin-bottom: 12px;">
+            <span style="color: white; font-size: 0.75em; font-weight: 600; letter-spacing: 1px;">BUSINESS ACCOUNT</span>
+        </div>
+        <h1 style="color: white; margin: 0 0 8px 0; font-size: 1.6em; font-weight: 700;">Register Your Business</h1>
+        <p style="color: rgba(255,255,255,0.9); margin: 0; font-size: 0.95em;">Get powerful tools to grow your business</p>
+    </div>
+
+    <!-- Form Card -->
+    <div style="background: white; padding: 35px; border-radius: 0 0 20px 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- Business Name -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #1a1a2e; font-size: 0.9em;">
+                    Business Name
+                </label>
+                <input type="text" name="business_name" required placeholder="e.g., Toyota of Joe"
+                       style="width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 10px; font-size: 1em; box-sizing: border-box; transition: border-color 0.2s; outline: none;"
+                       onfocus="this.style.borderColor='#764ba2';"
+                       onblur="this.style.borderColor='#e8e8e8';">
+            </div>
+
+            <!-- Username -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #1a1a2e; font-size: 0.9em;">
+                    Username <span style="font-weight: 400; color: #888;">(no spaces)</span>
+                </label>
+                <input type="text" name="username" required placeholder="Choose a username"
+                       pattern="[a-zA-Z0-9_]+" title="Letters, numbers, and underscores only"
+                       style="width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 10px; font-size: 1em; box-sizing: border-box; transition: border-color 0.2s; outline: none;"
+                       onfocus="this.style.borderColor='#764ba2';"
+                       onblur="this.style.borderColor='#e8e8e8';">
+            </div>
+
+            <!-- Password -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #1a1a2e; font-size: 0.9em;">
+                    Password
+                </label>
+                <input type="password" name="password1" required placeholder="Create a password"
+                       style="width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 10px; font-size: 1em; box-sizing: border-box; transition: border-color 0.2s; outline: none;"
+                       onfocus="this.style.borderColor='#764ba2';"
+                       onblur="this.style.borderColor='#e8e8e8';">
+            </div>
+
+            <!-- Confirm Password -->
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #1a1a2e; font-size: 0.9em;">
+                    Confirm Password
+                </label>
+                <input type="password" name="password2" required placeholder="Confirm your password"
+                       style="width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 10px; font-size: 1em; box-sizing: border-box; transition: border-color 0.2s; outline: none;"
+                       onfocus="this.style.borderColor='#764ba2';"
+                       onblur="this.style.borderColor='#e8e8e8';">
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" style="width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 1.05em; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 15px rgba(118,75,162,0.3);"
+                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(118,75,162,0.4)';"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(118,75,162,0.3)';">
+                Create Business Account
+            </button>
+        </form>
+
+        <!-- Benefits Box -->
+        <div style="margin-top: 24px; padding: 16px; background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); border-radius: 12px; border: 1px solid #e9e4ff;">
+            <p style="margin: 0 0 10px 0; font-size: 0.9em; color: #1a1a2e; font-weight: 600;">✨ Business accounts include:</p>
+            <ul style="margin: 0; padding-left: 20px; font-size: 0.85em; color: #666; line-height: 1.8;">
+                <li>Request Arecko-mendations from customers</li>
+                <li>Send AI-powered newsletters</li>
+                <li>Verified Business badge on posts</li>
+            </ul>
+        </div>
+
+        <!-- Links -->
+        <div style="margin-top: 24px; text-align: center;">
+            <p style="color: #666; font-size: 0.9em; margin-bottom: 16px;">
+                Already have an account? <a href="{% url 'login' %}" style="color: #764ba2; text-decoration: none; font-weight: 600;">Log In</a>
+            </p>
+            <div style="padding-top: 16px; border-top: 1px solid #eee;">
+                <p style="color: #888; font-size: 0.85em; margin-bottom: 8px;">Not a business?</p>
+                <a href="{% url 'signup' %}" style="color: #764ba2; text-decoration: none; font-weight: 600; font-size: 0.95em;">Sign Up as a User →</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 420px; margin: 50px auto; font-family: -apple-system, sans-serif;">
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 35px; border-radius: 20px 20px 0 0; text-align: center;">
+        <div style="font-size: 48px; margin-bottom: 12px;">🔐</div>
+        <h1 style="color: white; margin: 0 0 8px 0; font-size: 1.7em; font-weight: 700;">Welcome Back</h1>
+        <p style="color: rgba(255,255,255,0.7); margin: 0; font-size: 0.95em;">Log in to your Arecko account</p>
+    </div>
+
+    <!-- Form Card -->
+    <div style="background: white; padding: 35px; border-radius: 0 0 20px 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- Username -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #1a1a2e; font-size: 0.9em;">
+                    Username
+                </label>
+                <input type="text" name="username" required placeholder="Enter your username"
+                       style="width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 10px; font-size: 1em; box-sizing: border-box; transition: border-color 0.2s; outline: none;"
+                       onfocus="this.style.borderColor='#1a1a2e';"
+                       onblur="this.style.borderColor='#e8e8e8';">
+            </div>
+
+            <!-- Password -->
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #1a1a2e; font-size: 0.9em;">
+                    Password
+                </label>
+                <input type="password" name="password" required placeholder="Enter your password"
+                       style="width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 10px; font-size: 1em; box-sizing: border-box; transition: border-color 0.2s; outline: none;"
+                       onfocus="this.style.borderColor='#1a1a2e';"
+                       onblur="this.style.borderColor='#e8e8e8';">
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" style="width: 100%; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 16px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 1.05em; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 15px rgba(26,26,46,0.3);"
+                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(26,26,46,0.4)';"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(26,26,46,0.3)';">
+                Log In
+            </button>
+        </form>
+
+        <!-- Divider -->
+        <div style="display: flex; align-items: center; margin: 28px 0;">
+            <div style="flex: 1; height: 1px; background: #e8e8e8;"></div>
+            <span style="padding: 0 16px; color: #888; font-size: 0.85em;">New to Arecko?</span>
+            <div style="flex: 1; height: 1px; background: #e8e8e8;"></div>
+        </div>
+
+        <!-- Signup Options -->
+        <div style="display: flex; gap: 12px;">
+            <a href="{% url 'signup' %}" style="flex: 1; display: block; padding: 14px; border: 2px solid #00c6fb; border-radius: 10px; color: #005bea; text-decoration: none; font-weight: 600; text-align: center; font-size: 0.9em; transition: all 0.2s;"
+               onmouseover="this.style.background='#f0f9ff';"
+               onmouseout="this.style.background='white';">
+                👤 User
+            </a>
+            <a href="{% url 'business_signup' %}" style="flex: 1; display: block; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; color: white; text-decoration: none; font-weight: 600; text-align: center; font-size: 0.9em; transition: transform 0.2s;"
+               onmouseover="this.style.transform='translateY(-2px)';"
+               onmouseout="this.style.transform='translateY(0)';">
+                🏢 Business
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

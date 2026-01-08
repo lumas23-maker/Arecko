@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto; font-family: -apple-system, sans-serif;">
+
+    <!-- Stories Bar -->
+    {% if stories %}
+    <div style="background: white; border-radius: 12px; padding: 15px; margin: 20px 0; box-shadow: 0 2px 12px rgba(0,0,0,0.1);">
+        <div style="display: flex; gap: 15px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: thin;">
+            {% if user.is_authenticated and not user.is_staff %}
+            <!-- Create Story Button -->
+            <a href="{% url 'post_story' %}" style="text-decoration: none; flex-shrink: 0;">
+                <div style="width: 80px; text-align: center;">
+                    <div style="width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; border: 3px solid #667eea;">
+                        <span style="color: white; font-size: 28px;">+</span>
+                    </div>
+                    <span style="font-size: 0.75em; color: #333; font-weight: 500;">Post</span>
+                </div>
+            </a>
+            {% endif %}
+
+            <!-- Story Thumbnails -->
+            {% for story in stories|slice:":15" %}
+            <a href="{% url 'recko_detail' story.pk %}" style="text-decoration: none; flex-shrink: 0;">
+                <div style="width: 80px; text-align: center;">
+                    <div style="width: 70px; height: 70px; border-radius: 50%; background: {% if story.media %}url('{{ story.media.url }}') center/cover{% else %}linear-gradient(135deg, #f093fb, #f5576c){% endif %}; margin: 0 auto 8px; border: 3px solid {% if story.is_verified %}#38ef7d{% else %}#667eea{% endif %}; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                        {% if not story.media %}
+                        <span style="color: white; font-size: 24px; font-weight: 600;">{{ story.business_name.0|upper }}</span>
+                        {% elif story.is_video %}
+                        <div style="position: absolute; color: white; font-size: 20px; text-shadow: 0 1px 3px rgba(0,0,0,0.5);">▶</div>
+                        {% endif %}
+                    </div>
+                    <span style="font-size: 0.7em; color: #333; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ story.business_name|truncatechars:10 }}</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if user.is_authenticated and not user.is_staff %}
+    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+        <a href="{% url 'post_story' %}" style="flex: 1; background: linear-gradient(135deg, #667eea, #764ba2); color: white; text-align: center; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold;">+ Post an Arecko-mendation</a>
+    </div>
+    {% endif %}
+
+    <h2 style="text-align: center; color: #1c1e21;">Latest Arecko-mendations</h2>
+
+    {% for story in stories %}
+    <div style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.1);">
+
+        <!-- User info with profile link -->
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+            <a href="{% url 'user_profile' story.user.username %}" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                {% if story.user.profile.profile_picture %}
+                <img src="{{ story.user.profile.profile_picture.url }}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
+                {% else %}
+                <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 14px;">
+                    {{ story.user.first_name.0|default:story.user.username.0|upper }}
+                </div>
+                {% endif %}
+                <span style="font-weight: 600; color: #333;">{{ story.user.first_name|default:story.user.username }}</span>
+            </a>
+
+            {% if story.is_verified %}
+                <span style="background: #d4edda; color: #155724; font-size: 0.7em; padding: 3px 8px; border-radius: 10px; font-weight: 600;">✓ Verified</span>
+            {% endif %}
+
+            {% if story.user.is_staff or story.user.is_superuser %}
+                <span style="background: #e7f3ff; color: #1877f2; font-size: 0.7em; padding: 3px 8px; border-radius: 10px; font-weight: 600;">Business</span>
+            {% endif %}
+        </div>
+
+        <p style="margin: 0 0 5px 0;">
+            <a href="{% url 'recko_detail' story.pk %}" style="text-decoration: none; color: #008cff; font-weight: bold;">
+                {{ story.business_name }}
+            </a>
+            {% if story.industry and story.industry != 'other' %}
+                <span style="background: #f0f0f0; color: #666; font-size: 0.7em; padding: 2px 8px; border-radius: 10px; margin-left: 5px;">{{ story.get_industry_display }}</span>
+            {% endif %}
+        </p>
+        <p style="margin: 0; color: #444;">"{{ story.story }}"</p>
+
+        {% if story.media %}
+            <div style="margin-top: 15px; border-radius: 8px; overflow: hidden; background: #000;{% if story.is_video %} aspect-ratio: 16/9;{% endif %}">
+                {% if story.is_video %}
+                    <video controls preload="metadata" style="display: block; width: 100%; height: 100%; object-fit: contain;">
+                        <source src="{{ story.media.url }}" type="video/mp4">
+                    </video>
+                {% else %}
+                    <img src="{{ story.media.url }}" style="width: 100%; display: block;" alt="Business Media">
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <!-- Reactions Display -->
+        {% if story.reactions.count > 0 %}
+        <div style="display: flex; align-items: center; gap: 5px; margin-top: 12px; padding: 8px 0; font-size: 0.85em; color: #666;">
+            <span id="reaction-emojis-{{ story.id }}">
+                {% regroup story.reactions.all by reaction_type as reaction_groups %}
+                {% for group in reaction_groups %}{{ group.grouper|slice:":2" }}{% endfor %}
+            </span>
+            <span id="reaction-count-{{ story.id }}">{{ story.reactions.count }}</span>
+        </div>
+        {% endif %}
+
+        <!-- Reaction Bar -->
+        <div style="display: flex; gap: 15px; margin-top: 10px; border-top: 1px solid #eee; padding-top: 12px; align-items: center;">
+            <!-- Reaction Button with Picker -->
+            <div class="reaction-container" style="position: relative;">
+                <button onclick="toggleReactionPicker({{ story.id }})" id="react-btn-{{ story.id }}"
+                        style="background: none; border: none; cursor: pointer; font-size: 1em; padding: 5px 10px; border-radius: 6px; transition: background 0.2s; display: flex; align-items: center; gap: 5px;"
+                        onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='none'">
+                    {% with user_reaction=story.reactions.all|dictsort:"user_id" %}
+                        <span id="user-reaction-{{ story.id }}">
+                            {% for r in story.reactions.all %}{% if r.user == request.user %}{% if r.reaction_type == 'like' %}👍{% elif r.reaction_type == 'love' %}❤️{% elif r.reaction_type == 'haha' %}😂{% elif r.reaction_type == 'wow' %}😮{% elif r.reaction_type == 'sad' %}😢{% elif r.reaction_type == 'angry' %}😡{% endif %}{% endif %}{% empty %}🤍{% endfor %}
+                        </span>
+                    {% endwith %}
+                    <span style="color: #666;">React</span>
+                </button>
+
+                <!-- Reaction Picker Popup -->
+                <div id="reaction-picker-{{ story.id }}" style="display: none; position: absolute; bottom: 100%; left: 0; background: white; border-radius: 30px; padding: 8px 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); z-index: 100; white-space: nowrap;">
+                    <button onclick="react({{ story.id }}, 'like')" style="background: none; border: none; cursor: pointer; font-size: 1.5em; padding: 5px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform='scale(1)'" title="Like">👍</button>
+                    <button onclick="react({{ story.id }}, 'love')" style="background: none; border: none; cursor: pointer; font-size: 1.5em; padding: 5px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform='scale(1)'" title="Love">❤️</button>
+                    <button onclick="react({{ story.id }}, 'haha')" style="background: none; border: none; cursor: pointer; font-size: 1.5em; padding: 5px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform='scale(1)'" title="Haha">😂</button>
+                    <button onclick="react({{ story.id }}, 'wow')" style="background: none; border: none; cursor: pointer; font-size: 1.5em; padding: 5px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform='scale(1)'" title="Wow">😮</button>
+                    <button onclick="react({{ story.id }}, 'sad')" style="background: none; border: none; cursor: pointer; font-size: 1.5em; padding: 5px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform='scale(1)'" title="Sad">😢</button>
+                    <button onclick="react({{ story.id }}, 'angry')" style="background: none; border: none; cursor: pointer; font-size: 1.5em; padding: 5px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform='scale(1)'" title="Angry">😡</button>
+                </div>
+            </div>
+
+            {% if story.user == request.user or user.is_superuser %}
+                <a href="{% url 'delete_story' story.id %}" style="color: #ff4d4d; text-decoration: none; font-weight: bold; font-size: 0.9em;" onclick="return confirm('Delete this Recko?')">Delete</a>
+            {% elif user.is_staff %}
+                <a href="{% url 'delete_story' story.id %}" style="color: #ff4d4d; text-decoration: none; font-weight: bold; font-size: 0.9em;" onclick="return confirm('Delete this Recko about your business?')">Delete</a>
+            {% endif %}
+        </div>
+
+        <div style="margin-top: 15px; background: #f0f2f5; padding: 15px; border-radius: 8px;">
+            <p style="font-weight: bold; font-size: 0.9em; margin-bottom: 10px;">Comments:</p>
+            {% for comment in story.comments.all %}
+                <p style="font-size: 0.85em; margin: 5px 0;">
+                    <strong>{{ comment.user.username }}</strong>: {{ comment.text }}
+                </p>
+            {% endfor %}
+            
+            <form action="{% url 'add_comment' story.id %}" method="POST" style="margin-top: 10px; display: flex; gap: 5px;">
+                {% csrf_token %}
+                <input type="text" name="text" placeholder="Add a comment..." style="flex: 1; border-radius: 6px; border: 1px solid #ddd; padding: 8px;" required>
+                <button type="submit" style="background: #008cff; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer;">Post</button>
+            </form>
+        </div>
+    </div>
+    {% empty %}
+    <p style="text-align: center; color: #65676b;">No recommendations yet. Be the first to post!</p>
+    {% endfor %}
+</div>
+
+<script>
+let activePickerId = null;
+
+function toggleReactionPicker(storyId) {
+    const picker = document.getElementById('reaction-picker-' + storyId);
+
+    // Close any other open picker
+    if (activePickerId && activePickerId !== storyId) {
+        document.getElementById('reaction-picker-' + activePickerId).style.display = 'none';
+    }
+
+    if (picker.style.display === 'none') {
+        picker.style.display = 'flex';
+        activePickerId = storyId;
+    } else {
+        picker.style.display = 'none';
+        activePickerId = null;
+    }
+}
+
+function react(storyId, reactionType) {
+    // Hide picker
+    document.getElementById('reaction-picker-' + storyId).style.display = 'none';
+    activePickerId = null;
+
+    // Send reaction
+    fetch('/react/' + storyId + '/?type=' + reactionType, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update the reaction display
+            const emojis = {'like': '👍', 'love': '❤️', 'haha': '😂', 'wow': '😮', 'sad': '😢', 'angry': '😡'};
+            const userReactionSpan = document.getElementById('user-reaction-' + storyId);
+
+            if (data.user_reaction) {
+                userReactionSpan.textContent = emojis[data.user_reaction];
+            } else {
+                userReactionSpan.textContent = '🤍';
+            }
+
+            // Update count display
+            const countSpan = document.getElementById('reaction-count-' + storyId);
+            const emojisSpan = document.getElementById('reaction-emojis-' + storyId);
+
+            if (data.total > 0) {
+                if (countSpan) countSpan.textContent = data.total;
+                if (emojisSpan) emojisSpan.textContent = Object.keys(data.counts).join('');
+            }
+
+            // Reload to update reaction display properly
+            location.reload();
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+// Close picker when clicking outside
+document.addEventListener('click', function(e) {
+    if (activePickerId && !e.target.closest('.reaction-container')) {
+        document.getElementById('reaction-picker-' + activePickerId).style.display = 'none';
+        activePickerId = null;
+    }
+});
+</script>
+{% endblock %}

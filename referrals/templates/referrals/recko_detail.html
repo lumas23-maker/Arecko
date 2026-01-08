@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ story.business_name }} - Recko{% endblock %}
+
+{% block meta_tags %}
+<!-- Open Graph (Facebook, LinkedIn, etc.) -->
+<meta property="og:type" content="{% if story.is_video %}video.other{% else %}article{% endif %}">
+<meta property="og:title" content="I recommend {{ story.business_name }}!">
+<meta property="og:description" content="{{ story.story|truncatewords:30 }}">
+<meta property="og:url" content="{{ page_url }}">
+<meta property="og:site_name" content="Recko">
+{% if media_url %}
+    {% if story.is_video %}
+<meta property="og:video" content="{{ media_url }}">
+<meta property="og:video:type" content="video/mp4">
+<meta property="og:image" content="{{ media_url }}">
+    {% else %}
+<meta property="og:image" content="{{ media_url }}">
+<meta property="og:image:alt" content="Recommendation for {{ story.business_name }}">
+    {% endif %}
+{% endif %}
+
+<!-- Twitter Card -->
+{% if story.is_video %}
+<meta name="twitter:card" content="player">
+<meta name="twitter:player" content="{{ media_url }}">
+<meta name="twitter:player:width" content="640">
+<meta name="twitter:player:height" content="360">
+{% else %}
+<meta name="twitter:card" content="summary_large_image">
+{% endif %}
+<meta name="twitter:title" content="I recommend {{ story.business_name }}!">
+<meta name="twitter:description" content="{{ story.story|truncatewords:30 }}">
+{% if media_url %}
+<meta name="twitter:image" content="{{ media_url }}">
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 40px auto; padding: 20px; background: white; border-radius: 12px; box-shadow: 0 2px 15px rgba(0,0,0,0.1); font-family: -apple-system, sans-serif;">
+    <a href="{% url 'home' %}" style="text-decoration: none; color: #65676b; font-size: 0.9em;">← Back to Feed</a>
+    
+    <h1 style="color: #1c1e21; margin-top: 20px; margin-bottom: 5px;">
+        {{ story.business_name }}
+        {% if story.user.is_staff or story.user.is_superuser %}
+            <span style="color: #1877f2; font-size: 0.6em; vertical-align: middle; margin-left: 10px;">
+                ✓ Verified
+            </span>
+        {% endif %}
+    </h1>
+    
+    <p style="color: #65676b; font-size: 0.9em; margin-bottom: 25px;">
+        Posted by {{ story.user.username }} on {{ story.created_at|date:"F j, Y" }}
+    </p>
+    
+    <div style="font-size: 1.2em; line-height: 1.6; margin-bottom: 30px; color: #1c1e21; padding: 15px; background: #f8f9fa; border-left: 4px solid #008cff; border-radius: 4px;">
+        "{{ story.story }}"
+    </div>
+
+    {% if story.media %}
+        <div style="border-radius: 12px; overflow: hidden; background: #000; margin-bottom: 30px;{% if story.is_video %} aspect-ratio: 16/9;{% endif %}">
+            {% if story.is_video %}
+                <video controls autoplay muted loop style="display: block; width: 100%; height: 100%; object-fit: contain;">
+                    <source src="{{ story.media.url }}" type="video/mp4">
+                </video>
+            {% else %}
+                <img src="{{ story.media.url }}" style="width: 100%; display: block;" alt="Business Media">
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <div style="border-top: 1px solid #eee; padding-top: 20px;">
+        <h3 style="margin-bottom: 15px;">Discussion</h3>
+        {% for comment in story.comments.all %}
+            <div style="background: #f0f2f5; padding: 12px; border-radius: 8px; margin-bottom: 10px;">
+                <p style="margin: 0;"><strong>{{ comment.user.username }}</strong>: {{ comment.text }}</p>
+                <small style="color: #65676b;">{{ comment.created_at|timesince }} ago</small>
+            </div>
+        {% empty %}
+            <p style="color: #65676b;">No comments yet. Start the conversation!</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Privacy Policy - Arecko{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 40px auto; font-family: -apple-system, sans-serif; padding: 0 20px;">
+    <h1 style="color: #1a1a2e;">Privacy Policy</h1>
+    <p style="color: #666;">Last updated: January 2026</p>
+
+    <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.1); margin-top: 20px;">
+        <h2 style="color: #1a1a2e;">1. Information We Collect</h2>
+        <p>We collect information you provide directly to us, such as:</p>
+        <ul>
+            <li>Account information (name, email, username, password)</li>
+            <li>Profile information (bio, location, profile picture)</li>
+            <li>Content you post (recommendations, photos, videos, comments)</li>
+            <li>Contact information you choose to share with businesses</li>
+        </ul>
+
+        <h2 style="color: #1a1a2e;">2. How We Use Your Information</h2>
+        <p>We use the information we collect to:</p>
+        <ul>
+            <li>Provide, maintain, and improve our services</li>
+            <li>Send you referral requests on behalf of businesses</li>
+            <li>Process and display your recommendations</li>
+            <li>Communicate with you about your account</li>
+            <li>Verify referrals for our reward/status system</li>
+        </ul>
+
+        <h2 style="color: #1a1a2e;">3. Information Sharing</h2>
+        <p>We may share your information:</p>
+        <ul>
+            <li>With businesses when you post a recommendation about them</li>
+            <li>When you provide optional contact info for verification</li>
+            <li>To comply with legal obligations</li>
+            <li>With your consent</li>
+        </ul>
+        <p><strong>We do not sell your personal information.</strong></p>
+
+        <h2 style="color: #1a1a2e;">4. Data Security</h2>
+        <p>We implement appropriate security measures to protect your personal information, including encryption in transit (HTTPS) and secure password storage.</p>
+
+        <h2 style="color: #1a1a2e;">5. Your Rights</h2>
+        <p>You have the right to:</p>
+        <ul>
+            <li>Access your personal data</li>
+            <li>Correct inaccurate data</li>
+            <li>Delete your account and data</li>
+            <li>Export your data</li>
+        </ul>
+        <p>To exercise these rights, visit your <a href="{% url 'account_settings' %}" style="color: #667eea;">Account Settings</a>.</p>
+
+        <h2 style="color: #1a1a2e;">6. Cookies</h2>
+        <p>We use essential cookies for authentication and session management. These are necessary for the site to function properly.</p>
+
+        <h2 style="color: #1a1a2e;">7. Contact Us</h2>
+        <p>If you have questions about this Privacy Policy, please contact us at: <a href="mailto:privacy@arecko.com" style="color: #667eea;">privacy@arecko.com</a></p>
+    </div>
+</div>
+{% endblock %}

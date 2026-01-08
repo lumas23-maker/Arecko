@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 40px auto; font-family: -apple-system, sans-serif;">
+    <!-- Profile Header -->
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); padding: 40px 30px; border-radius: 20px 20px 0 0; text-align: center; position: relative;">
+        {% if request.user == profile_user %}
+        <a href="{% url 'edit_profile' %}" style="position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2); color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 0.85em; font-weight: 600; transition: background 0.2s;"
+           onmouseover="this.style.background='rgba(255,255,255,0.3)'"
+           onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+            Edit Profile
+        </a>
+        {% endif %}
+
+        {% if profile.profile_picture %}
+        <img src="{{ profile.profile_picture.url }}" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin: 0 auto 15px; display: block; border: 4px solid white; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+        {% else %}
+        <div style="width: 100px; height: 100px; background: white; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 42px; font-weight: 600; color: #667eea; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+            {{ profile_user.first_name.0|default:profile_user.username.0|upper }}
+        </div>
+        {% endif %}
+
+        <h1 style="color: white; margin: 0 0 8px 0; font-size: 1.8em; font-weight: 700;">
+            {{ profile_user.first_name|default:profile_user.username }}
+        </h1>
+        <p style="color: rgba(255,255,255,0.9); margin: 0; font-size: 1em;">@{{ profile_user.username }}</p>
+
+        {% if profile.location %}
+        <p style="color: rgba(255,255,255,0.8); margin: 8px 0 0 0; font-size: 0.9em;">📍 {{ profile.location }}</p>
+        {% endif %}
+
+        <!-- Overall Status Badge -->
+        {% if overall_status %}
+        <div style="margin-top: 20px;">
+            {% if overall_status == 'platinum' %}
+            <span style="background: linear-gradient(135deg, #e8e8e8, #c0c0c0, #e8e8e8); padding: 10px 25px; border-radius: 25px; font-weight: 700; color: #333; font-size: 1em; display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                💎 Platinum Referrer
+            </span>
+            {% elif overall_status == 'gold' %}
+            <span style="background: linear-gradient(135deg, #f7d774, #d4af37, #f7d774); padding: 10px 25px; border-radius: 25px; font-weight: 700; color: #333; font-size: 1em; display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                🥇 Gold Referrer
+            </span>
+            {% elif overall_status == 'silver' %}
+            <span style="background: linear-gradient(135deg, #e8e8e8, #b8b8b8, #e8e8e8); padding: 10px 25px; border-radius: 25px; font-weight: 700; color: #333; font-size: 1em; display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                🥈 Silver Referrer
+            </span>
+            {% elif overall_status == 'bronze' %}
+            <span style="background: linear-gradient(135deg, #e5a97a, #cd7f32, #e5a97a); padding: 10px 25px; border-radius: 25px; font-weight: 700; color: white; font-size: 1em; display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                🥉 Bronze Referrer
+            </span>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <p style="color: rgba(255,255,255,0.85); margin-top: 15px; font-size: 0.9em;">
+            {{ overall_count }} verified referral{{ overall_count|pluralize }}
+        </p>
+    </div>
+
+    <!-- Profile Content -->
+    <div style="background: white; padding: 35px; border-radius: 0 0 20px 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+
+        <!-- Bio & Info -->
+        {% if profile.bio or profile.website %}
+        <div style="margin-bottom: 30px; padding-bottom: 25px; border-bottom: 1px solid #eee;">
+            {% if profile.bio %}
+            <p style="margin: 0 0 15px 0; color: #444; font-size: 1em; line-height: 1.6;">{{ profile.bio }}</p>
+            {% endif %}
+            {% if profile.website %}
+            <a href="{{ profile.website }}" target="_blank" style="color: #667eea; text-decoration: none; font-size: 0.9em;">
+                🔗 {{ profile.website }}
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Business Status Badges -->
+        {% if business_statuses %}
+        <h2 style="color: #1a1a2e; font-size: 1.2em; margin: 0 0 20px 0; display: flex; align-items: center; gap: 10px;">
+            <span style="width: 28px; height: 28px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px;">🏢</span>
+            Business Status
+        </h2>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 30px;">
+            {% for business, data in business_statuses.items %}
+            <div style="background: #f8f9fa; border-radius: 10px; padding: 15px 20px; min-width: 150px;">
+                <div style="font-weight: 600; color: #333; margin-bottom: 8px;">{{ business }}</div>
+                {% if data.status == 'platinum' %}
+                <span style="background: linear-gradient(135deg, #e8e8e8, #c0c0c0); padding: 4px 12px; border-radius: 15px; font-size: 0.75em; font-weight: 600; color: #333;">💎 Platinum</span>
+                {% elif data.status == 'gold' %}
+                <span style="background: linear-gradient(135deg, #f7d774, #d4af37); padding: 4px 12px; border-radius: 15px; font-size: 0.75em; font-weight: 600; color: #333;">🥇 Gold</span>
+                {% elif data.status == 'silver' %}
+                <span style="background: linear-gradient(135deg, #e8e8e8, #b8b8b8); padding: 4px 12px; border-radius: 15px; font-size: 0.75em; font-weight: 600; color: #333;">🥈 Silver</span>
+                {% elif data.status == 'bronze' %}
+                <span style="background: linear-gradient(135deg, #e5a97a, #cd7f32); padding: 4px 12px; border-radius: 15px; font-size: 0.75em; font-weight: 600; color: white;">🥉 Bronze</span>
+                {% endif %}
+                <div style="font-size: 0.8em; color: #888; margin-top: 6px;">{{ data.count }} referral{{ data.count|pluralize }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Industry Status Badges -->
+        {% if industry_statuses %}
+        <h2 style="color: #1a1a2e; font-size: 1.2em; margin: 0 0 20px 0; display: flex; align-items: center; gap: 10px;">
+            <span style="width: 28px; height: 28px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px;">📂</span>
+            Industry Status
+        </h2>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 30px;">
+            {% for industry, data in industry_statuses.items %}
+            <div style="background: #f8f9fa; border-radius: 10px; padding: 15px 20px; min-width: 150px;">
+                <div style="font-weight: 600; color: #333; margin-bottom: 8px; text-transform: capitalize;">{{ industry }}</div>
+                {% if data.status == 'platinum' %}
+                <span style="background: linear-gradient(135deg, #e8e8e8, #c0c0c0); padding: 4px 12px; border-radius: 15px; font-size: 0.75em; font-weight: 600; color: #333;">💎 Platinum</span>
+                {% elif data.status == 'gold' %}
+                <span style="background: linear-gradient(135deg, #f7d774, #d4af37); padding: 4px 12px; border-radius: 15px; font-size: 0.75em; font-weight: 600; color: #333;">🥇 Gold</span>
+                {% elif data.status == 'silver' %}
+                <span style="background: linear-gradient(135deg, #e8e8e8, #b8b8b8); padding: 4px 12px; border-radius: 15px; font-size: 0.75em; font-weight: 600; color: #333;">🥈 Silver</span>
+                {% elif data.status == 'bronze' %}
+                <span style="background: linear-gradient(135deg, #e5a97a, #cd7f32); padding: 4px 12px; border-radius: 15px; font-size: 0.75em; font-weight: 600; color: white;">🥉 Bronze</span>
+                {% endif %}
+                <div style="font-size: 0.8em; color: #888; margin-top: 6px;">{{ data.count }} referral{{ data.count|pluralize }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Status Progress Guide -->
+        <div style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 12px; padding: 20px; margin-bottom: 30px;">
+            <h3 style="margin: 0 0 15px 0; font-size: 1em; color: #333;">Status Levels</h3>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; font-size: 0.85em;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="background: linear-gradient(135deg, #e5a97a, #cd7f32); width: 20px; height: 20px; border-radius: 50%;"></span>
+                    <span>Bronze: 5+ referrals</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="background: linear-gradient(135deg, #e8e8e8, #b8b8b8); width: 20px; height: 20px; border-radius: 50%;"></span>
+                    <span>Silver: 10+ referrals</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="background: linear-gradient(135deg, #f7d774, #d4af37); width: 20px; height: 20px; border-radius: 50%;"></span>
+                    <span>Gold: 15+ referrals</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="background: linear-gradient(135deg, #e8e8e8, #c0c0c0); width: 20px; height: 20px; border-radius: 50%;"></span>
+                    <span>Platinum: 20+ referrals</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Posts -->
+        <h2 style="color: #1a1a2e; font-size: 1.2em; margin: 0 0 20px 0; display: flex; align-items: center; gap: 10px;">
+            <span style="width: 28px; height: 28px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px;">📝</span>
+            Recent Arecko-mendations
+        </h2>
+
+        {% if recent_stories %}
+            {% for story in recent_stories %}
+            <a href="{% url 'recko_detail' story.pk %}" style="text-decoration: none; display: block;">
+                <div style="border: 2px solid #e8e8e8; border-radius: 12px; padding: 15px 20px; margin-bottom: 12px; transition: all 0.2s;"
+                     onmouseover="this.style.borderColor='#667eea'; this.style.transform='translateX(5px)'"
+                     onmouseout="this.style.borderColor='#e8e8e8'; this.style.transform='translateX(0)'">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: 600; color: #333; margin-bottom: 4px;">{{ story.business_name }}</div>
+                            <div style="font-size: 0.85em; color: #666;">{{ story.story|truncatewords:15 }}</div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            {% if story.is_verified %}
+                            <span style="background: #d4edda; color: #155724; padding: 4px 10px; border-radius: 15px; font-size: 0.75em; font-weight: 600;">✓ Verified</span>
+                            {% else %}
+                            <span style="background: #fff3cd; color: #856404; padding: 4px 10px; border-radius: 15px; font-size: 0.75em;">Pending</span>
+                            {% endif %}
+                            <span style="color: #667eea;">→</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        {% else %}
+            <div style="text-align: center; padding: 40px; color: #888; background: #f9f9f9; border-radius: 12px;">
+                <div style="font-size: 48px; margin-bottom: 10px;">📭</div>
+                <p style="margin: 0;">No Arecko-mendations yet.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 500px; margin: 40px auto; font-family: -apple-system, sans-serif;">
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 30px; border-radius: 20px 20px 0 0; text-align: center;">
+        <div style="font-size: 48px; margin-bottom: 10px;">⚙️</div>
+        <h1 style="color: white; margin: 0 0 8px 0; font-size: 1.6em; font-weight: 700;">Account Settings</h1>
+        <p style="color: rgba(255,255,255,0.7); margin: 0; font-size: 0.95em;">Manage your account</p>
+    </div>
+
+    <!-- Content Card -->
+    <div style="background: white; padding: 30px; border-radius: 0 0 20px 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+
+        <!-- Account Info -->
+        <div style="padding: 20px; background: #f8f9fa; border-radius: 12px; margin-bottom: 24px;">
+            <h3 style="margin: 0 0 15px 0; color: #1a1a2e; font-size: 1em;">Account Information</h3>
+            <p style="margin: 0 0 8px 0; color: #666; font-size: 0.95em;">
+                <strong>Display Name:</strong> {{ user.first_name|default:"Not set" }}
+            </p>
+            <p style="margin: 0 0 8px 0; color: #666; font-size: 0.95em;">
+                <strong>Username:</strong> {{ user.username }}
+            </p>
+            <p style="margin: 0; color: #666; font-size: 0.95em;">
+                <strong>Account Type:</strong>
+                {% if user.is_staff %}
+                    <span style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 2px 10px; border-radius: 10px; font-size: 0.85em;">Business</span>
+                {% else %}
+                    <span style="background: #e8e8e8; color: #666; padding: 2px 10px; border-radius: 10px; font-size: 0.85em;">User</span>
+                {% endif %}
+            </p>
+        </div>
+
+        <!-- Danger Zone -->
+        <div style="border: 2px solid #fee2e2; border-radius: 12px; padding: 20px; background: #fef2f2;">
+            <h3 style="margin: 0 0 10px 0; color: #dc2626; font-size: 1em;">⚠️ Danger Zone</h3>
+            <p style="margin: 0 0 16px 0; color: #666; font-size: 0.9em;">
+                Once you delete your account, there is no going back. All your posts and data will be permanently removed.
+            </p>
+            <button onclick="showDeleteConfirm()" style="background: #dc2626; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.95em; transition: background 0.2s;"
+                    onmouseover="this.style.background='#b91c1c';"
+                    onmouseout="this.style.background='#dc2626';">
+                Delete My Account
+            </button>
+        </div>
+
+        <!-- Back Link -->
+        <div style="text-align: center; margin-top: 24px;">
+            <a href="{% url 'home' %}" style="color: #666; text-decoration: none; font-size: 0.9em;">← Back to Home</a>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: white; padding: 30px; border-radius: 16px; max-width: 400px; margin: 20px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+        <div style="font-size: 48px; margin-bottom: 16px;">😢</div>
+        <h2 style="margin: 0 0 12px 0; color: #1a1a2e;">Are you sure?</h2>
+        <p style="margin: 0 0 24px 0; color: #666; font-size: 0.95em;">
+            This will permanently delete your account and all your posts. This action cannot be undone.
+        </p>
+        <form method="POST" action="{% url 'delete_account' %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" style="background: #dc2626; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-right: 10px;">
+                Yes, Delete My Account
+            </button>
+        </form>
+        <button onclick="hideDeleteConfirm()" style="background: #e8e8e8; color: #666; padding: 12px 24px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+            Cancel
+        </button>
+    </div>
+</div>
+
+<script>
+function showDeleteConfirm() {
+    document.getElementById('deleteModal').style.display = 'flex';
+}
+function hideDeleteConfirm() {
+    document.getElementById('deleteModal').style.display = 'none';
+}
+</script>
+{% endblock %}
