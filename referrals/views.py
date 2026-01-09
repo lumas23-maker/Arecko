@@ -14,9 +14,26 @@ import csv
 import re
 import io
 
+# Debug endpoint to check Cloudinary config
+def debug_config(request):
+    from django.conf import settings
+    return JsonResponse({
+        'cloudinary_cloud_name': os.environ.get('CLOUDINARY_CLOUD_NAME', 'NOT SET'),
+        'default_file_storage': getattr(settings, 'DEFAULT_FILE_STORAGE', 'NOT SET'),
+        'cloudinary_storage': getattr(settings, 'CLOUDINARY_STORAGE', {}),
+    })
+
 # 1. Main Feed: Displays all video stories/Reckos
 def home(request):
     stories = Story.objects.select_related('user').prefetch_related('user__profile').order_by('-created_at')
+    # Debug: Check if Cloudinary is configured
+    import sys
+    print(f"[DEBUG] CLOUDINARY_CLOUD_NAME: {os.environ.get('CLOUDINARY_CLOUD_NAME', 'NOT SET')}", file=sys.stderr)
+    print(f"[DEBUG] DEFAULT_FILE_STORAGE: {getattr(settings, 'DEFAULT_FILE_STORAGE', 'NOT SET')}", file=sys.stderr)
+    if stories:
+        first_story = stories[0]
+        if first_story.media:
+            print(f"[DEBUG] First story media URL: {first_story.media.url}", file=sys.stderr)
     return render(request, 'referrals/home.html', {'stories': stories})
 
 # 2. Detailed View: Individual Recko page

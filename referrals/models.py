@@ -53,6 +53,7 @@ class Story(models.Model):
     industry = models.CharField(max_length=50, choices=INDUSTRY_CHOICES, default='other')
     story = models.TextField()
     contact_info = models.CharField(max_length=255, blank=True, null=True, help_text="Optional: Your phone or email for the business to contact you")
+
     media = models.FileField(upload_to='stories/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     likes = models.ManyToManyField(User, related_name='liked_stories', blank=True)

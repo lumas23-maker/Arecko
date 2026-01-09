@@ -24,4 +24,5 @@ urlpatterns = [
     path('api/referral-request/', views.api_referral_request, name='api_referral_request'),
     path('privacy/', views.privacy_policy, name='privacy_policy'),
     path('terms/', views.terms_of_service, name='terms_of_service'),
+    path('debug-config/', views.debug_config, name='debug_config'),
 ]
