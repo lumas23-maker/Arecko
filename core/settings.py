@@ -144,6 +144,16 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', ''),
 }
 
+# Configure cloudinary library directly (required for URL generation)
+import cloudinary
+if os.environ.get('CLOUDINARY_CLOUD_NAME'):
+    cloudinary.config(
+        cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME'),
+        api_key=os.environ.get('CLOUDINARY_API_KEY'),
+        api_secret=os.environ.get('CLOUDINARY_API_SECRET'),
+        secure=True
+    )
+
 # Use Cloudinary for media files in production
 if os.environ.get('CLOUDINARY_CLOUD_NAME'):
     # Custom storage with resource_type='auto' for video/image support
