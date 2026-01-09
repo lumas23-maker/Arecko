@@ -16,6 +16,9 @@ urlpatterns = [
 ]
 
 # 4. Serving Media Files (Videos/Images) during development
-if settings.DEBUG:
+# Note: In production with Cloudinary, media is served from Cloudinary CDN
+# For local development without Cloudinary, serve from filesystem
+if settings.DEBUG or settings.MEDIA_ROOT:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
