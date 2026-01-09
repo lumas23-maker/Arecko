@@ -156,8 +156,8 @@ if os.environ.get('CLOUDINARY_CLOUD_NAME'):
 
 # Use Cloudinary for media files in production
 if os.environ.get('CLOUDINARY_CLOUD_NAME'):
-    # Custom storage with resource_type='auto' for video/image support
-    DEFAULT_FILE_STORAGE = 'core.storage.AutoMediaCloudinaryStorage'
+    # Use default Cloudinary storage (testing)
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
     MEDIA_URL = '/media/'
 else:
     # Local development fallback
