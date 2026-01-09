@@ -137,20 +137,30 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
-# Cloudinary settings for media storage
+# Cloudinary settings for media storage (values stripped to remove whitespace)
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', ''),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', ''),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', ''),
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', '').strip(),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', '').strip(),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', '').strip(),
 }
 
 # Configure cloudinary library directly (required for URL generation)
 import cloudinary
-if os.environ.get('CLOUDINARY_CLOUD_NAME'):
+
+# Debug: Print Cloudinary config (remove in production)
+_cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME', '').strip()
+_api_key = os.environ.get('CLOUDINARY_API_KEY', '').strip()
+_api_secret = os.environ.get('CLOUDINARY_API_SECRET', '').strip()
+
+print(f"[CLOUDINARY DEBUG] Cloud Name: '{_cloud_name}' (len={len(_cloud_name)})")
+print(f"[CLOUDINARY DEBUG] API Key: '{_api_key}' (len={len(_api_key)})")
+print(f"[CLOUDINARY DEBUG] API Secret: '{_api_secret[:4]}...{_api_secret[-4:]}' (len={len(_api_secret)})")
+
+if _cloud_name:
     cloudinary.config(
-        cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME'),
-        api_key=os.environ.get('CLOUDINARY_API_KEY'),
-        api_secret=os.environ.get('CLOUDINARY_API_SECRET'),
+        cloud_name=_cloud_name,
+        api_key=_api_key,
+        api_secret=_api_secret,
         secure=True
     )
 
