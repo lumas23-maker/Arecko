@@ -138,29 +138,13 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Cloudinary settings for media storage
-# Supports either CLOUDINARY_URL or separate variables
 import cloudinary
 
-_cloudinary_url = os.environ.get('CLOUDINARY_URL', '').strip()
+_cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME', '').strip()
+_api_key = os.environ.get('CLOUDINARY_API_KEY', '').strip()
+_api_secret = os.environ.get('CLOUDINARY_API_SECRET', '').strip()
 
-if _cloudinary_url:
-    # Use CLOUDINARY_URL format: cloudinary://API_KEY:API_SECRET@CLOUD_NAME
-    cloudinary.config(cloudinary_url=_cloudinary_url, secure=True)
-    _config = cloudinary.config()
-    CLOUDINARY_STORAGE = {
-        'CLOUD_NAME': _config.cloud_name,
-        'API_KEY': _config.api_key,
-        'API_SECRET': _config.api_secret,
-    }
-    print(f"[CLOUDINARY] Using CLOUDINARY_URL, cloud: {_config.cloud_name}")
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    MEDIA_URL = '/media/'
-elif os.environ.get('CLOUDINARY_CLOUD_NAME'):
-    # Use separate variables
-    _cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME', '').strip()
-    _api_key = os.environ.get('CLOUDINARY_API_KEY', '').strip()
-    _api_secret = os.environ.get('CLOUDINARY_API_SECRET', '').strip()
-
+if _cloud_name and _api_key and _api_secret:
     CLOUDINARY_STORAGE = {
         'CLOUD_NAME': _cloud_name,
         'API_KEY': _api_key,
@@ -172,7 +156,7 @@ elif os.environ.get('CLOUDINARY_CLOUD_NAME'):
         api_secret=_api_secret,
         secure=True
     )
-    print(f"[CLOUDINARY] Using separate vars, cloud: {_cloud_name}")
+    print(f"[CLOUDINARY] Configured with cloud: {_cloud_name}")
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
     MEDIA_URL = '/media/'
 else:
