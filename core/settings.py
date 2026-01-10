@@ -183,11 +183,23 @@ LOGOUT_REDIRECT_URL = 'home'
 # =============================================================================
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'lumas23@gmail.com')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+
+# Use SendGrid if API key is set, otherwise fall back to Gmail
+if os.environ.get('SENDGRID_API_KEY'):
+    EMAIL_HOST = 'smtp.sendgrid.net'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = 'apikey'  # This is literal - SendGrid uses 'apikey' as username
+    EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY')
+    DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'referrals@arecko.com')
+else:
+    # Gmail fallback
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+    DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_HOST_USER', '')
 
 # =============================================================================
 # SECURITY SETTINGS FOR PRODUCTION
