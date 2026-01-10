@@ -39,11 +39,17 @@ class AutoMediaCloudinaryStorage(MediaCloudinaryStorage):
         """
         Save file, putting videos in a 'videos/' subfolder.
         """
+        # Check both the storage name and the original file name
+        original_name = getattr(content, 'name', name) or name
+        is_video = self._is_video_by_extension(name) or self._is_video_by_extension(original_name)
+
+        print(f"[STORAGE] Saving: name={name}, original={original_name}, is_video={is_video}")
+
         # If it's a video, modify the path to include 'videos/'
-        if self._is_video_by_extension(name):
-            # Replace 'stories/' with 'stories/videos/' for videos
+        if is_video:
             if 'stories/' in name and '/videos/' not in name:
                 name = name.replace('stories/', 'stories/videos/')
+                print(f"[STORAGE] Modified path to: {name}")
 
         return super()._save(name, content)
 
