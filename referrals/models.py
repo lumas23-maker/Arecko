@@ -69,7 +69,10 @@ class Story(models.Model):
     # Helper to check if the uploaded media is a video
     def is_video(self):
         if self.media:
-            return self.media.name.lower().endswith(('.mp4', '.mov', '.avi'))
+            name = self.media.name.lower()
+            # Check file extension OR if stored in videos/ folder (Cloudinary strips extensions)
+            return (name.endswith(('.mp4', '.mov', '.avi', '.webm', '.mkv', '.flv', '.wmv', '.m4v'))
+                    or '/videos/' in name)
         return False
 
     @staticmethod
