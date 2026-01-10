@@ -138,6 +138,10 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Cloudinary settings for media storage
+# Remove CLOUDINARY_URL if set (prevents auto-config issues)
+if 'CLOUDINARY_URL' in os.environ:
+    del os.environ['CLOUDINARY_URL']
+
 import cloudinary
 
 _cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME', '').strip()
