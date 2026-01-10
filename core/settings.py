@@ -161,7 +161,8 @@ if _cloud_name and _api_key and _api_secret:
         secure=True
     )
     print(f"[CLOUDINARY] Configured with cloud: {_cloud_name}")
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    # Custom storage that handles videos with resource_type='auto'
+    DEFAULT_FILE_STORAGE = 'core.storage.AutoMediaCloudinaryStorage'
     MEDIA_URL = '/media/'
 else:
     # Local development fallback
