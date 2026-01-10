@@ -3,56 +3,53 @@ Custom Cloudinary storage for handling video and image uploads.
 """
 from cloudinary_storage.storage import MediaCloudinaryStorage
 import cloudinary
+import os
 
 
 VIDEO_EXTENSIONS = ('.mp4', '.mov', '.avi', '.webm', '.mkv', '.flv', '.wmv', '.m4v')
-IMAGE_EXTENSIONS = ('.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.tiff', '.svg')
 
 
 class AutoMediaCloudinaryStorage(MediaCloudinaryStorage):
     """
-    Custom storage that uses resource_type='auto' for uploads to automatically
-    detect whether uploaded file is an image, video, or raw file.
-    For URL generation, uses the correct resource_type based on file extension.
+    Custom storage that handles videos and images with correct resource_type.
+    Videos are stored with '/videos/' in the path for later detection.
     """
 
-    def _get_resource_type(self, name):
-        """
-        Determine resource type based on file extension.
-        Returns 'video' for video files, 'image' for images.
-        """
+    def _is_video_by_extension(self, name):
+        """Check if file is a video based on extension."""
         if name:
-            lower_name = name.lower()
-            if lower_name.endswith(VIDEO_EXTENSIONS):
-                return 'video'
-        return 'image'
+            return name.lower().endswith(VIDEO_EXTENSIONS)
+        return False
 
-    def _upload_resource_type(self, name):
-        """Use 'auto' for uploads so Cloudinary auto-detects the type."""
-        return 'auto'
+    def _is_video_by_path(self, name):
+        """Check if file is a video based on path containing 'videos/'."""
+        if name:
+            return '/videos/' in name or name.startswith('videos/')
+        return False
+
+    def _is_video(self, name):
+        """Check if file is a video by extension or path."""
+        return self._is_video_by_extension(name) or self._is_video_by_path(name)
+
+    def _get_resource_type(self, name):
+        """Return 'video' for video files, 'image' for everything else."""
+        return 'video' if self._is_video(name) else 'image'
 
     def _save(self, name, content):
-        """Override save to use resource_type='auto' for uploads."""
-        from cloudinary_storage.storage import RESOURCE_TYPES
+        """
+        Save file, putting videos in a 'videos/' subfolder.
+        """
+        # If it's a video, modify the path to include 'videos/'
+        if self._is_video_by_extension(name):
+            # Replace 'stories/' with 'stories/videos/' for videos
+            if 'stories/' in name and '/videos/' not in name:
+                name = name.replace('stories/', 'stories/videos/')
 
-        # Get the original resource type method
-        original_method = self._get_resource_type
-
-        # Temporarily override to use 'auto' for upload
-        self._get_resource_type = lambda n: 'auto'
-
-        try:
-            result = super()._save(name, content)
-        finally:
-            # Restore original method
-            self._get_resource_type = original_method
-
-        return result
+        return super()._save(name, content)
 
     def url(self, name):
         """
         Generate the URL with the correct resource_type for delivery.
-        Cloudinary URLs must use 'video' or 'image', not 'auto'.
         """
         if not name:
             return None
