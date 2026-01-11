@@ -4,8 +4,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    # 1. Django Admin Panel (using 'manage/' to avoid WAF blocks on 'admin/')
-    path('manage/', admin.site.urls),
+    # 1. Django Admin Panel (using obscure path to avoid WAF blocks)
+    path('arecko-dashboard/', admin.site.urls),
 
     # 2. Main Referral App URLs
     # This connects everything in referrals/urls.py to your main site
