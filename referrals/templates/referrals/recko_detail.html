@@ -42,15 +42,15 @@
     
     <h1 style="color: #1c1e21; margin-top: 20px; margin-bottom: 5px;">
         {{ story.business_name }}
-        {% if story.user.is_staff or story.user.is_superuser %}
+        {% if story.user and story.user.is_staff or story.user and story.user.is_superuser %}
             <span style="color: #1877f2; font-size: 0.6em; vertical-align: middle; margin-left: 10px;">
                 ✓ Verified
             </span>
         {% endif %}
     </h1>
-    
+
     <p style="color: #65676b; font-size: 0.9em; margin-bottom: 25px;">
-        Posted by {{ story.user.username }} on {{ story.created_at|date:"F j, Y" }}
+        Posted by {{ story.get_poster_name }} on {{ story.created_at|date:"F j, Y" }}
     </p>
     
     <div style="font-size: 1.2em; line-height: 1.6; margin-bottom: 30px; color: #1c1e21; padding: 15px; background: #f8f9fa; border-left: 4px solid #008cff; border-radius: 4px;">

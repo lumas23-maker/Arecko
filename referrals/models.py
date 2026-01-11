@@ -48,7 +48,8 @@ INDUSTRY_CHOICES = [
 
 # Model for the business recommendations/posts
 class Story(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    guest_name = models.CharField(max_length=100, blank=True, null=True, help_text="Name for anonymous posters")
     business_name = models.CharField(max_length=255)
     industry = models.CharField(max_length=50, choices=INDUSTRY_CHOICES, default='other')
     story = models.TextField()
@@ -64,7 +65,13 @@ class Story(models.Model):
     verified_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.business_name} by {self.user.username}"
+        return f"{self.business_name} by {self.get_poster_name()}"
+
+    def get_poster_name(self):
+        """Get the display name of whoever posted this story"""
+        if self.user:
+            return self.user.first_name or self.user.username
+        return self.guest_name or "Anonymous"
 
     # Helper to check if the uploaded media is a video
     def is_video(self):

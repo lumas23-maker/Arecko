@@ -47,11 +47,10 @@ def recko_detail(request, pk):
         'media_url': media_url
     })
 
-# 3. Post a Story: Handles uploading new video recommendations
-@login_required
+# 3. Post a Story: Handles uploading new video recommendations (no login required)
 def post_story(request):
     # Business accounts cannot post Reckos - they can only ask for them
-    if request.user.is_staff:
+    if request.user.is_authenticated and request.user.is_staff:
         messages.error(request, "Business accounts cannot post Reckos. Use 'Ask for Recko' to request referrals from customers.")
         return redirect('ask_referral')
 
@@ -61,22 +60,34 @@ def post_story(request):
         contact_info = request.POST.get('contact_info', '').strip() or None
         story_text = request.POST.get('story')
         media = request.FILES.get('media')
+        guest_name = request.POST.get('guest_name', '').strip() or None
+
         if business_name and story_text:
-            story = Story.objects.create(
-                user=request.user,
-                business_name=business_name,
-                industry=industry,
-                contact_info=contact_info,
-                story=story_text,
-                media=media
-            )
+            # Create story with user if logged in, otherwise use guest_name
+            if request.user.is_authenticated:
+                story = Story.objects.create(
+                    user=request.user,
+                    business_name=business_name,
+                    industry=industry,
+                    contact_info=contact_info,
+                    story=story_text,
+                    media=media
+                )
+            else:
+                story = Story.objects.create(
+                    guest_name=guest_name or "Anonymous",
+                    business_name=business_name,
+                    industry=industry,
+                    contact_info=contact_info,
+                    story=story_text,
+                    media=media
+                )
             # Notify businesses about new referral (find staff users with matching business name)
             notify_business_of_referral(story)
             return redirect('share_success', pk=story.pk)
-    return render(request, 'referrals/post_story.html')
+    return render(request, 'referrals/post_story.html', {'user_is_authenticated': request.user.is_authenticated})
 
-# 3b. Share Success: Shows social share buttons after posting
-@login_required
+# 3b. Share Success: Shows social share buttons after posting (no login required)
 def share_success(request, pk):
     story = get_object_or_404(Story, pk=pk)
     share_url = request.build_absolute_uri(f'/recko/{story.pk}/')
@@ -508,11 +519,12 @@ def notify_business_of_referral(story):
     for business_user in business_users:
         if business_user.email:
             try:
+                referrer_name = story.get_poster_name()
                 subject = f"New Arecko-mendation for {story.business_name}!"
-                text_content = f"A new referral has been posted for your business by {story.user.first_name or story.user.username}. Log in to verify it!"
+                text_content = f"A new referral has been posted for your business by {referrer_name}. Log in to verify it!"
                 html_content = render_to_string('referrals/referral_notification.html', {
                     'business_name': story.business_name,
-                    'referrer_name': story.user.first_name or story.user.username,
+                    'referrer_name': referrer_name,
                     'story': story,
                     'verify_url': 'https://www.arecko.com/business/dashboard/'
                 })

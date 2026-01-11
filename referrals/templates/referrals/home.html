@@ -7,7 +7,7 @@
     {% if stories %}
     <div style="background: white; border-radius: 12px; padding: 15px; margin: 20px 0; box-shadow: 0 2px 12px rgba(0,0,0,0.1);">
         <div style="display: flex; gap: 15px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: thin;">
-            {% if user.is_authenticated and not user.is_staff %}
+            {% if not user.is_staff %}
             <!-- Create Story Button -->
             <a href="{% url 'post_story' %}" style="text-decoration: none; flex-shrink: 0;">
                 <div style="width: 80px; text-align: center;">
@@ -38,7 +38,7 @@
     </div>
     {% endif %}
 
-    {% if user.is_authenticated and not user.is_staff %}
+    {% if not user.is_staff %}
     <div style="display: flex; gap: 10px; margin-bottom: 20px;">
         <a href="{% url 'post_story' %}" style="flex: 1; background: linear-gradient(135deg, #667eea, #764ba2); color: white; text-align: center; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold;">+ Post an Arecko-mendation</a>
     </div>
@@ -51,6 +51,7 @@
 
         <!-- User info with profile link -->
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+            {% if story.user %}
             <a href="{% url 'user_profile' story.user.username %}" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
                 {% if story.user.profile.profile_picture %}
                 <img src="{{ story.user.profile.profile_picture.url }}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
@@ -61,12 +62,20 @@
                 {% endif %}
                 <span style="font-weight: 600; color: #333;">{{ story.user.first_name|default:story.user.username }}</span>
             </a>
+            {% else %}
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #a8a8a8, #6b6b6b); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 14px;">
+                    {{ story.get_poster_name.0|upper }}
+                </div>
+                <span style="font-weight: 600; color: #333;">{{ story.get_poster_name }}</span>
+            </div>
+            {% endif %}
 
             {% if story.is_verified %}
                 <span style="background: #d4edda; color: #155724; font-size: 0.7em; padding: 3px 8px; border-radius: 10px; font-weight: 600;">✓ Verified</span>
             {% endif %}
 
-            {% if story.user.is_staff or story.user.is_superuser %}
+            {% if story.user and story.user.is_staff or story.user and story.user.is_superuser %}
                 <span style="background: #e7f3ff; color: #1877f2; font-size: 0.7em; padding: 3px 8px; border-radius: 10px; font-weight: 600;">Business</span>
             {% endif %}
         </div>
@@ -131,7 +140,7 @@
                 </div>
             </div>
 
-            {% if story.user == request.user or user.is_superuser %}
+            {% if story.user and story.user == request.user or user.is_superuser %}
                 <a href="{% url 'delete_story' story.id %}" style="color: #ff4d4d; text-decoration: none; font-weight: bold; font-size: 0.9em;" onclick="return confirm('Delete this Recko?')">Delete</a>
             {% elif user.is_staff %}
                 <a href="{% url 'delete_story' story.id %}" style="color: #ff4d4d; text-decoration: none; font-weight: bold; font-size: 0.9em;" onclick="return confirm('Delete this Recko about your business?')">Delete</a>
