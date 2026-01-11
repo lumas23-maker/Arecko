@@ -173,10 +173,10 @@ def send_referral_email(business_user, email_addr, personal_message=''):
 
     # Prepare Email Content
     subject = f"Thank you from {business_name} - We'd love your Arecko-mendation!"
-    text_content = f"{business_name} would like to thank you for doing business with us. Please leave us an Arecko-mendation at: https://arecko.com/post/"
+    text_content = f"{business_name} would like to thank you for doing business with us. Please leave us an Arecko-mendation at: https://www.arecko.com/post/"
     html_content = render_to_string('referrals/newsletter_email.html', {
         'business_name': business_name,
-        'referral_url': "https://arecko.com/post/",
+        'referral_url': "https://www.arecko.com/post/",
         'personal_message': personal_message
     })
 
@@ -514,7 +514,7 @@ def notify_business_of_referral(story):
                     'business_name': story.business_name,
                     'referrer_name': story.user.first_name or story.user.username,
                     'story': story,
-                    'verify_url': 'https://arecko.com/business/dashboard/'
+                    'verify_url': 'https://www.arecko.com/business/dashboard/'
                 })
 
                 from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', settings.EMAIL_HOST_USER)
