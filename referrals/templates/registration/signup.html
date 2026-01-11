@@ -3,7 +3,7 @@
 {% block content %}
 <div style="max-width: 440px; margin: 40px auto; font-family: -apple-system, sans-serif;">
     <!-- Header -->
-    <div style="background: linear-gradient(135deg, #00c6fb 0%, #005bea 100%); padding: 30px; border-radius: 20px 20px 0 0; text-align: center;">
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 20px 20px 0 0; text-align: center;">
         <div style="font-size: 48px; margin-bottom: 10px;">👋</div>
         <h1 style="color: white; margin: 0 0 8px 0; font-size: 1.6em; font-weight: 700;">Join Arecko</h1>
         <p style="color: rgba(255,255,255,0.9); margin: 0; font-size: 0.95em;">Share and discover great recommendations</p>
@@ -11,6 +11,19 @@
 
     <!-- Form Card -->
     <div style="background: white; padding: 35px; border-radius: 0 0 20px 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+
+        <!-- Account Type Toggle -->
+        <div style="display: flex; gap: 10px; margin-bottom: 24px;">
+            <div style="flex: 1; padding: 12px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 10px; text-align: center; font-weight: 600; font-size: 0.9em;">
+                Personal Account
+            </div>
+            <a href="{% url 'business_signup' %}" style="flex: 1; padding: 12px; background: #f0f0f0; color: #666; border-radius: 10px; text-align: center; font-weight: 600; font-size: 0.9em; text-decoration: none; transition: background 0.2s;"
+               onmouseover="this.style.background='#e0e0e0';"
+               onmouseout="this.style.background='#f0f0f0';">
+                Business Account
+            </a>
+        </div>
+
         <form method="POST">
             {% csrf_token %}
 
@@ -21,7 +34,7 @@
                 </label>
                 <input type="text" name="display_name" required placeholder="Your full name"
                        style="width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 10px; font-size: 1em; box-sizing: border-box; transition: border-color 0.2s; outline: none;"
-                       onfocus="this.style.borderColor='#005bea';"
+                       onfocus="this.style.borderColor='#764ba2';"
                        onblur="this.style.borderColor='#e8e8e8';">
             </div>
 
@@ -33,7 +46,7 @@
                 <input type="text" name="username" required placeholder="Choose a username"
                        pattern="[a-zA-Z0-9_]+" title="Letters, numbers, and underscores only"
                        style="width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 10px; font-size: 1em; box-sizing: border-box; transition: border-color 0.2s; outline: none;"
-                       onfocus="this.style.borderColor='#005bea';"
+                       onfocus="this.style.borderColor='#764ba2';"
                        onblur="this.style.borderColor='#e8e8e8';">
             </div>
 
@@ -44,7 +57,7 @@
                 </label>
                 <input type="password" name="password1" required placeholder="Create a password"
                        style="width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 10px; font-size: 1em; box-sizing: border-box; transition: border-color 0.2s; outline: none;"
-                       onfocus="this.style.borderColor='#005bea';"
+                       onfocus="this.style.borderColor='#764ba2';"
                        onblur="this.style.borderColor='#e8e8e8';">
             </div>
 
@@ -55,12 +68,12 @@
                 </label>
                 <input type="password" name="password2" required placeholder="Confirm your password"
                        style="width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 10px; font-size: 1em; box-sizing: border-box; transition: border-color 0.2s; outline: none;"
-                       onfocus="this.style.borderColor='#005bea';"
+                       onfocus="this.style.borderColor='#764ba2';"
                        onblur="this.style.borderColor='#e8e8e8';">
             </div>
 
             <!-- Submit Button -->
-            <button type="submit" style="width: 100%; background: linear-gradient(135deg, #00c6fb 0%, #005bea 100%); color: white; padding: 16px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 1.05em; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 15px rgba(0,91,234,0.3);"
+            <button type="submit" style="width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 1.05em; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 15px rgba(0,91,234,0.3);"
                     onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0,91,234,0.4)';"
                     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,91,234,0.3)';">
                 Create Account
@@ -70,11 +83,11 @@
         <!-- Links -->
         <div style="margin-top: 24px; text-align: center;">
             <p style="color: #666; font-size: 0.9em; margin-bottom: 16px;">
-                Already have an account? <a href="{% url 'login' %}" style="color: #005bea; text-decoration: none; font-weight: 600;">Log In</a>
+                Already have an account? <a href="{% url 'login' %}" style="color: #764ba2; text-decoration: none; font-weight: 600;">Log In</a>
             </p>
             <div style="padding-top: 16px; border-top: 1px solid #eee;">
                 <p style="color: #888; font-size: 0.85em; margin-bottom: 8px;">Are you a business?</p>
-                <a href="{% url 'business_signup' %}" style="color: #005bea; text-decoration: none; font-weight: 600; font-size: 0.95em;">Sign Up as a Business →</a>
+                <a href="{% url 'business_signup' %}" style="color: #764ba2; text-decoration: none; font-weight: 600; font-size: 0.95em;">Sign Up as a Business →</a>
             </div>
         </div>
     </div>
