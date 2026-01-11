@@ -67,23 +67,21 @@ class AutoMediaCloudinaryStorage(MediaCloudinaryStorage):
 
         # Build the Cloudinary URL with optimizations
         if is_video:
-            # Video optimizations: auto format, auto quality, max width 720p
+            # Video optimizations: auto quality, max width 720p
             url = cloudinary.utils.cloudinary_url(
                 name,
                 resource_type=resource_type,
                 type='upload',
-                format='auto',
                 quality='auto',
                 width=720,
                 crop='limit'  # Only shrink if larger, don't upscale
             )[0]
         else:
-            # Image optimizations: auto format, auto quality
+            # Image optimizations: auto quality
             url = cloudinary.utils.cloudinary_url(
                 name,
                 resource_type=resource_type,
                 type='upload',
-                format='auto',
                 quality='auto'
             )[0]
 
