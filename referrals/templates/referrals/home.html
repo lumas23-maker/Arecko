@@ -23,7 +23,7 @@
             {% for story in stories|slice:":15" %}
             <a href="{% url 'recko_detail' story.pk %}" style="text-decoration: none; flex-shrink: 0;">
                 <div style="width: 80px; text-align: center;">
-                    <div style="width: 70px; height: 70px; border-radius: 50%; background: {% if story.media %}url('{{ story.media.url }}') center/cover{% else %}linear-gradient(135deg, #f093fb, #f5576c){% endif %}; margin: 0 auto 8px; border: 3px solid {% if story.is_verified %}#38ef7d{% else %}#667eea{% endif %}; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                    <div style="width: 70px; height: 70px; border-radius: 50%; background: {% if story.thumbnail %}url('{{ story.thumbnail.url }}') center/cover{% elif story.media %}url('{{ story.media.url }}') center/cover{% else %}linear-gradient(135deg, #f093fb, #f5576c){% endif %}; margin: 0 auto 8px; border: 3px solid {% if story.is_verified %}#38ef7d{% else %}#667eea{% endif %}; display: flex; align-items: center; justify-content: center; overflow: hidden;">
                         {% if not story.media %}
                         <span style="color: white; font-size: 24px; font-weight: 600;">{{ story.business_name.0|upper }}</span>
                         {% elif story.is_video %}

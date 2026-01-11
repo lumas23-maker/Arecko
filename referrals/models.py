@@ -56,6 +56,7 @@ class Story(models.Model):
     contact_info = models.CharField(max_length=255, blank=True, null=True, help_text="Optional: Contact info for the business being recommended")
 
     media = models.FileField(upload_to='stories/', blank=True, null=True)
+    thumbnail = models.ImageField(upload_to='thumbnails/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     likes = models.ManyToManyField(User, related_name='liked_stories', blank=True)
 

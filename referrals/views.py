@@ -62,6 +62,22 @@ def post_story(request):
         guest_name = request.POST.get('guest_name', '').strip() or None
 
         if business_name and story_text:
+            # Process video if uploaded
+            processed_media = media
+            thumbnail = None
+
+            if media:
+                from core.video_processor import is_video_file, process_uploaded_video
+                if is_video_file(media.name):
+                    print(f"[POST] Processing video: {media.name}")
+                    result = process_uploaded_video(media)
+                    if result:
+                        processed_media = result.get('video', media)
+                        thumbnail = result.get('thumbnail')
+                        print(f"[POST] Video processed successfully")
+                    else:
+                        print(f"[POST] Video processing failed, using original")
+
             # Create story with user if logged in, otherwise use guest_name
             if request.user.is_authenticated:
                 story = Story.objects.create(
@@ -70,7 +86,8 @@ def post_story(request):
                     industry=industry,
                     contact_info=contact_info,
                     story=story_text,
-                    media=media
+                    media=processed_media,
+                    thumbnail=thumbnail
                 )
             else:
                 story = Story.objects.create(
@@ -79,7 +96,8 @@ def post_story(request):
                     industry=industry,
                     contact_info=contact_info,
                     story=story_text,
-                    media=media
+                    media=processed_media,
+                    thumbnail=thumbnail
                 )
             # Notify businesses about new referral (find staff users with matching business name)
             notify_business_of_referral(story)
