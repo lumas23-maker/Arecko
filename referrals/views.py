@@ -180,8 +180,12 @@ def send_referral_email(business_user, email_addr, personal_message=''):
         'personal_message': personal_message
     })
 
+    # Use DEFAULT_FROM_EMAIL for "from" address, with Reply-To set to business user's email
+    from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', settings.EMAIL_HOST_USER)
+    reply_to = [business_user.email] if business_user.email else []
+
     # Send the automated email
-    msg = EmailMultiAlternatives(subject, text_content, settings.EMAIL_HOST_USER, [email_addr])
+    msg = EmailMultiAlternatives(subject, text_content, from_email, [email_addr], reply_to=reply_to)
     msg.attach_alternative(html_content, "text/html")
     msg.send()
 
@@ -380,10 +384,13 @@ def create_newsletter(request):
                     'content': content
                 })
 
-                # Send to all recipients
+                # Send to all recipients with Reply-To set to sender's email
+                from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', settings.EMAIL_HOST_USER)
+                reply_to = [request.user.email] if request.user.email else []
+
                 for email_addr in email_list:
                     try:
-                        msg = EmailMultiAlternatives(subject, text_content, settings.EMAIL_HOST_USER, [email_addr])
+                        msg = EmailMultiAlternatives(subject, text_content, from_email, [email_addr], reply_to=reply_to)
                         msg.attach_alternative(html_content, "text/html")
                         msg.send()
                     except Exception as e:
@@ -510,7 +517,8 @@ def notify_business_of_referral(story):
                     'verify_url': 'https://arecko.com/business/dashboard/'
                 })
 
-                msg = EmailMultiAlternatives(subject, text_content, settings.EMAIL_HOST_USER, [business_user.email])
+                from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', settings.EMAIL_HOST_USER)
+                msg = EmailMultiAlternatives(subject, text_content, from_email, [business_user.email])
                 msg.attach_alternative(html_content, "text/html")
                 msg.send()
             except Exception as e:
