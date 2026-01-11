@@ -53,7 +53,7 @@ class Story(models.Model):
     business_name = models.CharField(max_length=255)
     industry = models.CharField(max_length=50, choices=INDUSTRY_CHOICES, default='other')
     story = models.TextField()
-    contact_info = models.CharField(max_length=255, blank=True, null=True, help_text="Optional: Your phone or email for the business to contact you")
+    contact_info = models.CharField(max_length=255, blank=True, null=True, help_text="Optional: Contact info for the business being recommended")
 
     media = models.FileField(upload_to='stories/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
