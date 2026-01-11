@@ -56,18 +56,35 @@ class AutoMediaCloudinaryStorage(MediaCloudinaryStorage):
     def url(self, name):
         """
         Generate the URL with the correct resource_type for delivery.
+        Includes optimizations for faster loading.
         """
         if not name:
             return None
 
         # Determine the correct resource type for this file
         resource_type = self._get_resource_type(name)
+        is_video = resource_type == 'video'
 
-        # Build the Cloudinary URL with the correct resource type
-        url = cloudinary.utils.cloudinary_url(
-            name,
-            resource_type=resource_type,
-            type='upload'
-        )[0]
+        # Build the Cloudinary URL with optimizations
+        if is_video:
+            # Video optimizations: auto format, auto quality, max width 720p
+            url = cloudinary.utils.cloudinary_url(
+                name,
+                resource_type=resource_type,
+                type='upload',
+                format='auto',
+                quality='auto',
+                width=720,
+                crop='limit'  # Only shrink if larger, don't upscale
+            )[0]
+        else:
+            # Image optimizations: auto format, auto quality
+            url = cloudinary.utils.cloudinary_url(
+                name,
+                resource_type=resource_type,
+                type='upload',
+                format='auto',
+                quality='auto'
+            )[0]
 
         return url
