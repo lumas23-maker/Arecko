@@ -23,18 +23,17 @@ def debug_config(request):
         'cloudinary_storage': getattr(settings, 'CLOUDINARY_STORAGE', {}),
     })
 
-# 1. Main Feed: Displays all video stories/Reckos
+# 1. Main Feed: Displays all video stories/Reckos with pagination
 def home(request):
-    stories = Story.objects.select_related('user').prefetch_related('user__profile').order_by('-created_at')
-    # Debug: Check if Cloudinary is configured
-    import sys
-    print(f"[DEBUG] CLOUDINARY_CLOUD_NAME: {os.environ.get('CLOUDINARY_CLOUD_NAME', 'NOT SET')}", file=sys.stderr)
-    print(f"[DEBUG] DEFAULT_FILE_STORAGE: {getattr(settings, 'DEFAULT_FILE_STORAGE', 'NOT SET')}", file=sys.stderr)
-    if stories:
-        first_story = stories[0]
-        if first_story.media:
-            print(f"[DEBUG] First story media URL: {first_story.media.url}", file=sys.stderr)
-    return render(request, 'referrals/home.html', {'stories': stories})
+    from django.core.paginator import Paginator
+
+    stories_list = Story.objects.select_related('user').prefetch_related('user__profile').order_by('-created_at')
+    paginator = Paginator(stories_list, 10)  # 10 posts per page
+
+    page_number = request.GET.get('page', 1)
+    stories = paginator.get_page(page_number)
+
+    return render(request, 'referrals/home.html', {'stories': stories, 'paginator': paginator})
 
 # 2. Detailed View: Individual Recko page
 def recko_detail(request, pk):

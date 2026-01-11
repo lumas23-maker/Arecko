@@ -165,6 +165,25 @@
     {% empty %}
     <p style="text-align: center; color: #65676b;">No recommendations yet. Be the first to post!</p>
     {% endfor %}
+
+    <!-- Pagination -->
+    {% if stories.has_other_pages %}
+    <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin: 30px 0; flex-wrap: wrap;">
+        {% if stories.has_previous %}
+            <a href="?page=1" style="padding: 8px 14px; background: white; border-radius: 8px; text-decoration: none; color: #667eea; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">First</a>
+            <a href="?page={{ stories.previous_page_number }}" style="padding: 8px 14px; background: white; border-radius: 8px; text-decoration: none; color: #667eea; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">Previous</a>
+        {% endif %}
+
+        <span style="padding: 8px 14px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 8px; font-weight: 600;">
+            Page {{ stories.number }} of {{ stories.paginator.num_pages }}
+        </span>
+
+        {% if stories.has_next %}
+            <a href="?page={{ stories.next_page_number }}" style="padding: 8px 14px; background: white; border-radius: 8px; text-decoration: none; color: #667eea; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">Next</a>
+            <a href="?page={{ stories.paginator.num_pages }}" style="padding: 8px 14px; background: white; border-radius: 8px; text-decoration: none; color: #667eea; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">Last</a>
+        {% endif %}
+    </div>
+    {% endif %}
 </div>
 
 <script>
